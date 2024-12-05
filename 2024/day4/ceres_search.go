@@ -1,21 +1,20 @@
 package day4
 
-import (
-	"fmt"
-	"math"
-)
+func ceresSearchMasX(input []string) (found int) {
+	aLocations := searchFor('A', input)
+	for i := 0; i < len(aLocations); i++ {
+		if aLocations[i].IsMas(input) {
+			found++
+		}
+	}
+	return
+}
 
 func ceresSearch(word string, input []string) (found int) {
-	// xLocations := searchFor(word[0], input)
-	// mLocations := searchFor(word[1], input)
-	// aLocations := searchFor(word[2], input)
-	// sLocations := searchFor(word[3], input)
-
 	var locations = make([][]Location, len(word))
 	for i := 0; i < len(word); i++ {
 		locations[i] = searchFor(word[i], input)
 	}
-
 	return searchWord(locations)
 
 }
@@ -46,71 +45,6 @@ func searchNear(currentCharLocations [][]Location, current Location, dir Directi
 		}
 	}
 	return
-}
-
-type Location struct {
-	Row int
-	Col int
-}
-
-type Direction int
-
-const (
-	LEFT_DIRECTION Direction = iota
-	RIGHT_DIRECTION
-	UP_DIRECTION
-	DOWN_DIRECTION
-	TRAVERSAL_RIGHT_DOWN_DIRECTION
-	TRAVERSAL_RIGHT_UP_DIRECTION
-	TRAVERSAL_LEFT_DOWN_DIRECTION
-	TRAVERSAL_LEFT_UP_DIRECTION
-)
-
-func (l1 *Location) String() string {
-	return fmt.Sprintf("[%d:%d]", l1.Row, l1.Col)
-}
-
-func (current *Location) Near(next Location) (Direction, bool) {
-	var resultDirection Direction
-	near := (math.Abs(float64(next.Col-current.Col)) == 1 ||
-		math.Abs(float64(next.Col-current.Col)) == 0) &&
-		(math.Abs(float64(next.Row-current.Row)) == 1 ||
-			math.Abs(float64(next.Row-current.Row)) == 0)
-	if near {
-		if next.Row == current.Row &&
-			next.Col-current.Col == 1 {
-			return RIGHT_DIRECTION, near
-		}
-		if next.Row == current.Row &&
-			next.Col-current.Col == -11 {
-			return LEFT_DIRECTION, near
-		}
-		if next.Col == current.Col &&
-			next.Row-current.Row == 1 {
-			return DOWN_DIRECTION, near
-		}
-		if next.Col == current.Col &&
-			next.Row-current.Row == -1 {
-			return UP_DIRECTION, near
-		}
-		if next.Row-current.Row == 1 &&
-			next.Col-current.Col == 1 {
-			return TRAVERSAL_RIGHT_DOWN_DIRECTION, near
-		}
-		if next.Row-current.Row == -1 &&
-			next.Col-current.Col == 1 {
-			return TRAVERSAL_RIGHT_UP_DIRECTION, near
-		}
-		if next.Row-current.Row == 1 &&
-			next.Col-current.Col == -1 {
-			return TRAVERSAL_LEFT_DOWN_DIRECTION, near
-		}
-		if next.Row-current.Row == -1 &&
-			next.Col-current.Col == -1 {
-			return TRAVERSAL_LEFT_UP_DIRECTION, near
-		}
-	}
-	return resultDirection, near
 }
 
 func searchFor(b byte, input []string) (xLocations []Location) {

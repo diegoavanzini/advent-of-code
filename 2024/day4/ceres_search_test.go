@@ -9,6 +9,37 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestX_MAS_Search_WithBigInput(t *testing.T) {
+	want := 2507
+	input := ReadFile("input.txt")
+	got := ceresSearchMasX(input)
+	assert.Equal(t, want, got)
+}
+
+func TestX_MAS_Search(t *testing.T) {
+	want := 9
+	input := []string{
+		`MMMSXXMASM`,
+		`MSAMXMSMSA`,
+		`AMXSXMAAMM`,
+		`MSAMASMSMX`,
+		`XMASAMXAMM`,
+		`XXAMMXXAMA`,
+		`SMSMSASXSS`,
+		`SAXAMASAAA`,
+		`MAMMMXMMMM`,
+		`MXMXAXMASX`,
+	}
+	got := ceresSearchMasX(input)
+	assert.Equal(t, want, got)
+}
+
+func TestIsMas(t *testing.T) {
+	l := Location{Col: 1, Row: 1}
+	got := l.IsMas([]string{`MDS`, `XAS`, `MLS`})
+	assert.True(t, got)
+}
+
 func TestXMASSearch_WithBigInput(t *testing.T) {
 	want := 2507
 	input := ReadFile("input.txt")

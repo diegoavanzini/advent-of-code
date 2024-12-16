@@ -11,10 +11,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFindTotalCalibrationResultAoCInput(t *testing.T) {
-	want := 483
+func TestFindTotalCalibrationResultWithConcatenationAoCInput(t *testing.T) {
+	want := 4998764814652
 	parsedInput := ReadFile("input.txt")
-	got := getTotalCalibrationResult(parsedInput)
+	got := getTotalCalibrationResult(parsedInput, true)
+	assert.Equal(t, want, got)
+}
+func TestFindTotalCalibrationResultWithConcatenation(t *testing.T) {
+	var want = 11387
+	input := `190: 10 19
+3267: 81 40 27
+83: 17 5
+156: 15 6
+7290: 6 8 6 15
+161011: 16 10 13
+192: 17 8 14
+21037: 9 7 18 13
+292: 11 6 16 20`
+	parsedInput, err := parse(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := getTotalCalibrationResult(parsedInput, true)
+	assert.Equal(t, want, got)
+}
+
+func TestFindTotalCalibrationResultAoCInput(t *testing.T) {
+	want := 4998764814652
+	parsedInput := ReadFile("input.txt")
+	got := getTotalCalibrationResult(parsedInput, false)
 	assert.Equal(t, want, got)
 }
 
@@ -33,7 +58,7 @@ func TestFindTotalCalibrationResult(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	got := getTotalCalibrationResult(parsedInput)
+	got := getTotalCalibrationResult(parsedInput, false)
 	assert.Equal(t, want, got)
 }
 

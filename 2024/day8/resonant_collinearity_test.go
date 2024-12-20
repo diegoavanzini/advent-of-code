@@ -10,6 +10,51 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestResonantCollinearityPart2(t *testing.T) {
+	want := 34
+	input := []string{
+		"............",
+		"........0...",
+		".....0......",
+		".......0....",
+		"....0.......",
+		"......A.....",
+		"............",
+		"............",
+		"........A...",
+		".........A..",
+		"............",
+		"............",
+	}
+	got := ResonantCollinearity(input, []bool{true}...)
+	assert.Equal(t, want, got)
+}
+func TestResonantCollinearityPart2WithAoCInput(t *testing.T) {
+	want := 336
+	input := ReadInputFile("./input.txt")
+
+	got := ResonantCollinearity(input, []bool{true}...)
+	assert.Equal(t, want, got)
+}
+
+func TestResonantCollinearityTestPart2(t *testing.T) {
+	want := 9
+	input := []string{
+		"T.........",
+		"...T......",
+		".T........",
+		"..........",
+		"..........",
+		"..........",
+		"..........",
+		"..........",
+		"..........",
+		"..........",
+	}
+	got := ResonantCollinearity(input, []bool{true}...)
+	assert.Equal(t, want, got)
+}
+
 func TestResonantCollinearityAoCInput(t *testing.T) {
 	want := 336
 	input := ReadInputFile("./input.txt")
@@ -24,15 +69,12 @@ func ReadInputFile(filename string) []string {
 		log.Fatal(err)
 	}
 	defer file.Close()
-
 	scanner := bufio.NewScanner(file)
-
 	var lines []string
 	for scanner.Scan() {
 		line := scanner.Text()
 		lines = append(lines, line)
 	}
-
 	return lines
 }
 
@@ -80,7 +122,7 @@ func TestGetAntinodesPosition(t *testing.T) {
 		X:     7,
 		Y:     2,
 	}
-	an := getAntinodesPosition(ap1, ap2)
+	an := getAntinodesPosition(ap1, ap2, 10, 10)
 	assert.Equal(t, 2, len(an))
 	assert.Equal(t, 3, an[0].X)
 	assert.Equal(t, 0, an[0].Y)

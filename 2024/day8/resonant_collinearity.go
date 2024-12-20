@@ -11,7 +11,7 @@ type AntennaPosition struct {
 	Y     int
 }
 
-func ResonantCollinearity(input []string) int {
+func ResonantCollinearity(input []string, part2 ...bool) int {
 	output := input
 	var antinodesCounterResult = map[string]AntennaPosition{}
 	yLimit := len(input) - 1
@@ -26,19 +26,27 @@ func ResonantCollinearity(input []string) int {
 				if an1 == an2 {
 					continue
 				}
-				anp := getAntinodesPosition(ap[an1], ap[an2])
-				if intoTheArea(anp[0], xLimit, yLimit) {
-					output[anp[0].Y] = output[anp[0].Y][:anp[0].X] + "#" + output[anp[0].Y][anp[0].X+1:]
-					antinodesCounterResult[fmt.Sprintf("%d%d", anp[0].X, anp[0].Y)] = anp[0]
+				anps := getAntinodesPosition(ap[an1], ap[an2], xLimit, yLimit, part2...)
+				if len(part2) > 0 && part2[0] && len(anps) > 0 {
+					antinodesCounterResult[fmt.Sprintf("%d-%d", ap[an1].X, ap[an1].Y)] = ap[an1]
+					antinodesCounterResult[fmt.Sprintf("%d-%d", ap[an2].X, ap[an2].Y)] = ap[an2]
 				}
-				if intoTheArea(anp[1], xLimit, yLimit) {
-					output[anp[1].Y] = output[anp[1].Y][:anp[1].X] + "#" + output[anp[1].Y][anp[1].X+1:]
-					antinodesCounterResult[fmt.Sprintf("%d%d", anp[1].X, anp[1].Y)] = anp[1]
+				for i := 0; i < len(anps); i++ {
+					output[anps[i].Y] = output[anps[i].Y][:anps[i].X] + "#" + output[anps[i].Y][anps[i].X+1:]
+					antinodesCounterResult[fmt.Sprintf("%d-%d", anps[i].X, anps[i].Y)] = anps[i]
 				}
 			}
 		}
 	}
+	Visualize(output, len(antinodesCounterResult))
 	return len(antinodesCounterResult)
+}
+
+func Visualize(output []string, len int) {
+	for _, o := range output {
+		fmt.Printf("%s\n", o)
+	}
+	fmt.Printf("counter: %d\n\n", len)
 }
 
 func intoTheArea(anp AntennaPosition, xLimit int, yLimit int) bool {
@@ -48,26 +56,42 @@ func intoTheArea(anp AntennaPosition, xLimit int, yLimit int) bool {
 		anp.Y >= 0
 }
 
-func getAntinodesPosition(antennaPosition1, antennaPosition2 AntennaPosition) []AntennaPosition {
-	antinode1 := AntennaPosition{Value: "#"}
-	antinode2 := AntennaPosition{Value: "#"}
+func getAntinodesPosition(antennaPosition1, antennaPosition2 AntennaPosition, xLimit int, yLimit int, part2 ...bool) (anp []AntennaPosition) {
+
 	xDistance := antennaPosition1.X - antennaPosition2.X
-	if xDistance >= 0 {
-		antinode1.X = antennaPosition1.X + xDistance
-		antinode2.X = antennaPosition2.X - xDistance
-	} else {
-		antinode1.X = antennaPosition1.X + xDistance
-		antinode2.X = antennaPosition2.X - xDistance
-	}
 	yDistance := antennaPosition1.Y - antennaPosition2.Y
-	if yDistance >= 0 {
-		antinode1.Y = antennaPosition2.Y - yDistance
-		antinode2.Y = antennaPosition1.Y + yDistance
-	} else {
-		antinode1.Y = antennaPosition1.Y + yDistance
-		antinode2.Y = antennaPosition2.Y - yDistance
+	var i int
+	for {
+		i++
+		antinode1 := AntennaPosition{Value: "#"}
+		antinode2 := AntennaPosition{Value: "#"}
+		if xDistance >= 0 {
+			antinode1.X = antennaPosition1.X + (xDistance * i)
+			antinode2.X = antennaPosition2.X - (xDistance * i)
+		} else {
+			antinode1.X = antennaPosition1.X + (xDistance * i)
+			antinode2.X = antennaPosition2.X - (xDistance * i)
+		}
+		if yDistance >= 0 {
+			antinode1.Y = antennaPosition2.Y - (yDistance * i)
+			antinode2.Y = antennaPosition1.Y + (yDistance * i)
+		} else {
+			antinode1.Y = antennaPosition1.Y + (yDistance * i)
+			antinode2.Y = antennaPosition2.Y - (yDistance * i)
+		}
+		if !intoTheArea(antinode1, xLimit, yLimit) && !intoTheArea(antinode2, xLimit, yLimit) {
+			return
+		}
+		if intoTheArea(antinode1, xLimit, yLimit) {
+			anp = append(anp, antinode1)
+		}
+		if intoTheArea(antinode2, xLimit, yLimit) {
+			anp = append(anp, antinode2)
+		}
+		if len(part2) == 0 || !part2[0] {
+			return
+		}
 	}
-	return []AntennaPosition{antinode1, antinode2}
 }
 
 func getAntennaPositionsGroupedByValue(input []string) map[string][]AntennaPosition {
